@@ -77,7 +77,6 @@ export const getAccessToken = async () => {
       })
     });
     const data = await result.json();
-    console.log(59, data);
     return data;
   } catch(err) {
     console.log("Failed to get access token", err);

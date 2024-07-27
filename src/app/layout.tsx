@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
 import { ReactQueryProvider } from "@/components/ReactQueryProvider";
+import { Suspense } from "react";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -25,16 +26,18 @@ export default function RootLayout({
 }>) {
   return (
     <ReactQueryProvider>
-    <html lang="en">
-      <body 
-        className={cn(
-            "min-h-screen bg-background font-sans antialiased",
-            fontSans.variable
-        )}>
-        {children}
-        <Toaster />
-      </body>
-    </html>
+      <html lang="en">
+        <body 
+          className={cn(
+              "min-h-screen bg-background font-sans antialiased",
+              fontSans.variable
+          )}>
+          <Suspense>
+            {children}
+          </Suspense>
+          <Toaster />
+        </body>
+      </html>
     </ReactQueryProvider>
   );
 }

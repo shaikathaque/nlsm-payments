@@ -1,6 +1,8 @@
 "use client"
 
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 export default function PaymentSuccessPage() {
   const searchParams = useSearchParams();

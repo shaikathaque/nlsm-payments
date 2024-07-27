@@ -1,8 +1,10 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import Link from "next/link";
 import { redirect, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 export default function PaymentFailurePage() {
   const searchParams = useSearchParams();
