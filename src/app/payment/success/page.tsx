@@ -1,11 +1,14 @@
-export default async function PaymentSuccessPage() {
+"use client"
+
+import { useSearchParams } from "next/navigation";
+
+export default function PaymentSuccessPage() {
+  const searchParams = useSearchParams();
+  const transactionId = searchParams.get("trxID") || "Unknown Failure Reason"
   return (
-    <div>
-      <div className="flex flex-col justify-center">
+    <div className="flex min-h-screen flex-col items-center gap-y-4 p-24">
         <h1 className="text-center">Your Bkash Payment was successful!</h1>
-        <p className="text-center">Thank you for your payment!</p>
-        <div>Payment Details</div>
-      </div>
+        <p className="text-center">Your transaction ID is: {transactionId}</p>
     </div>
   )
 };

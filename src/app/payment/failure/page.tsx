@@ -1,16 +1,19 @@
 "use client"
 
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { redirect, useSearchParams } from "next/navigation";
 
 export default function PaymentFailurePage() {
   const searchParams = useSearchParams();
-  const status = searchParams.get("status");
+  const statusMessage = searchParams.get("statusMessage") || "Unknown Failure Reason"
   return (
-    <div>
-      <div className="flex flex-col justify-center">
-        <h1 className="text-center">Your Bkash payment was unsuccessfull for the following reason</h1>
-        <p className="text-center">{status || "Unkonwn reason"}</p>
-      </div>
+    <div className="flex min-h-screen flex-col items-center gap-y-4 p-24">
+      <h1 className="text-center">Your Bkash payment was unsuccessfull for the following reason:</h1>
+      <p className="text-center">{statusMessage || "Unkonwn reason"}</p>
+      <Link href="/">
+        <Button>Try Again</Button>
+      </Link>
     </div>
   )
 };

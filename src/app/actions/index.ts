@@ -24,7 +24,6 @@ interface PaymentData {
 }
 
 export const startPayment = async (paymentData: PaymentData ) => {
-  let paymentPageUrl;
   try {
     // Case: token is not loaded yet
     // This is incorrect because it the API may load an old ID token
@@ -50,6 +49,7 @@ export const startPayment = async (paymentData: PaymentData ) => {
 
     return createPaymentResult;
   } catch(err) {
+    console.log("Error starting payment", err);
     throw new Error("Failed to start payment", err as Error);
   }
 };
@@ -153,10 +153,6 @@ const refreshToken = async () => {
 }
 
 export const executePayment = async (paymentID: string) => {
-  let resultStatusCode = null;
-  let resultStatusMessage = null;
-  let transactionId = null;
-
   try {
     if (!BKASH_APP_KEY) {
       throw new Error("Missing bkash app key");
@@ -179,39 +175,17 @@ export const executePayment = async (paymentID: string) => {
     })
     const data = await result.json();
 
-    const { message, statusCode, statusMessage, trxID } = data;
+    const { message } = data;
+
     if (message === "Unauthorized") {
-      console.log("executePayment failed due to unauthorized");
       await refreshToken();
-      return;
+      throw new Error("Payment execution failed due to authorization error", message);
     }
-
-    if (statusCode && statusMessage) {
-      resultStatusCode = statusCode;
-      resultStatusMessage = statusMessage;
-    }
-
-    if (trxID) {
-      transactionId = trxID;
-    }
-
-    console.log("executePayment completed with data:", data);
+    console.log("executePayment data:", data);
+    return data;
   } catch(err) {
+    console.log(err);
     throw new Error("Failed to execute payment", err as Error);
-  } finally {
-    // Insufficient Balance
-    if (resultStatusCode === "2023") {
-      redirect(`/payment/failure?status=${resultStatusMessage}`);
-    }
-
-    if (resultStatusCode === "0000") {
-      redirect(`/payment/success?status=${resultStatusMessage}&trxID=${transactionId}`);
-    }
-
-    // Payment execution already been called before
-    if (resultStatusCode === "2117") {
-      redirect(`/payment/failure?status=${resultStatusMessage}`);
-    }
   }
 };
 

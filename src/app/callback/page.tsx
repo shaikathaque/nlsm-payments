@@ -6,6 +6,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { executePayment } from "../actions";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "@/components/ui/use-toast";
 
 export default function CallbackPage() {
   const router = useRouter()
@@ -13,30 +15,45 @@ export default function CallbackPage() {
   const status = searchParams.get("status");
   const paymentId = searchParams.get("paymentID");
 
+  const mutation = useMutation({
+    mutationFn: executePayment,
+    onSuccess: ({ statusCode, statusMessage, trxID }) => {
+      if (statusCode === "0000") {
+        router.push(`/payment/success?status=${statusCode}&statusMessage=${statusMessage}&trxID=${trxID}`);
+        return;
+      }
+
+      // Insufficient Balance
+      if (statusCode === "2023") {
+        router.push(`/payment/failure?status=${statusCode}&statusMessage=${statusMessage}`);
+        return;
+      }
+
+      // Payment failed due to other reasons
+      router.push(`/payment/failure?status=${statusCode}&statusMessage=${statusMessage}`);
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Sorry, we ran into an issue while processing your payment",
+        description: JSON.stringify(error),
+      })
+    }
+  });
+
   useEffect(() => {
-    console.log("Callback status:", status);
-    console.log("Callback paymentId:", paymentId);
-
-    const completePayment = async (paymentId: string) => {
-      await executePayment(paymentId);
-    };
-
     if (status === "success" && paymentId) {
-      completePayment(paymentId);
+      mutation.mutate(paymentId);
     } else {
-      console.log("Payment not successfull with status", status);
+      router.push(`/payment/failure?status=${status}`);
     }
   }, []);
 
-  if (status !== "success") {
-    router.push(`/payment/failure?status=${status}`);
-  }
-
   return (
-    <div>
-      {status === "success" && 
-        <div>
-          Executing Payment
+    <div className="flex min-h-screen flex-col items-center justify-between p-24">
+      {mutation.isPending && 
+        <div className="flex flex-col items-center gap-y-4">
+          <h1>Your Payment is Processing</h1>
           <LoadingSpinner />
         </div>
       }      
@@ -44,4 +61,3 @@ export default function CallbackPage() {
   )
 };
 
-// executePayment data: { statusCode: '2023', statusMessage: 'Insufficient Balance' }
