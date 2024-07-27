@@ -15,7 +15,13 @@ let BKASH_ID_TOKEN: string;
 let BKASH_REFRESH_TOKEN: string;
 let TOKEN_EXPIRY_TIME: number;
 
-export const startPayment = async () => {
+interface PaymentData {
+  athleteName: string;
+  amount: number;
+  email: string;
+}
+
+export const startPayment = async (paymentData: PaymentData ) => {
   let paymentPageUrl;
   try {
     // Case: token is not loaded yet
@@ -26,20 +32,14 @@ export const startPayment = async () => {
       BKASH_REFRESH_TOKEN = refresh_token;
       TOKEN_EXPIRY_TIME = Date.now() + expires_in 
     }
-
-    // Case: token is expired or will expire in 5 minutes
-
-    if (TOKEN_EXPIRY_TIME && (TOKEN_EXPIRY_TIME - Date.now() > 300)) {
-      await refreshToken();
-    }
     
-    const createPaymentResult = await createPayment();
+    const createPaymentResult = await createPayment(paymentData);
 
     const { message } = createPaymentResult;
     if (message === "The incoming token has expired") {
       await refreshToken();
-      // retry the request now the token is refresed
-      throw new Error("Create payment failed", message);
+      console.log("Start payment failed due to token expiry");
+      return;
     }
 
     const { bkashURL, statusCode } = createPaymentResult;
@@ -89,7 +89,7 @@ export const getAccessToken = async () => {
   }
 };
 
-const createPayment = async () => {
+const createPayment = async ({ amount, athleteName }: PaymentData) => {
   try {
     if (!BKASH_APP_KEY) {
       throw new Error("Missing bkash app key");
@@ -108,12 +108,12 @@ const createPayment = async () => {
       },
       body: JSON.stringify({
         mode: "0011",
-        payerReference: "ekjfdednrekjfvbrwkjf",
+        payerReference: athleteName,
         callbackURL: BKASH_CALLBACK_URL,
-        amount: "500",
+        amount: String(amount),
         currency: "BDT",
         intent: "sale",
-        merchantInvoiceNumber: "ewlkfedwenmrlewknfcewf",
+        merchantInvoiceNumber: new Date().toLocaleString(),
       })
     })
     const data = await result.json();
@@ -158,6 +158,10 @@ const refreshToken = async () => {
 }
 
 export const executePayment = async (paymentID: string) => {
+  let resultStatusCode = null;
+  let resultStatusMessage = null;
+  let transactionId = null;
+
   try {
     if (!BKASH_APP_KEY) {
       throw new Error("Missing bkash app key");
@@ -180,16 +184,39 @@ export const executePayment = async (paymentID: string) => {
     })
     const data = await result.json();
 
-    const { message } = data;
+    const { message, statusCode, statusMessage, trxID } = data;
     if (message === "Unauthorized") {
+      console.log("executePayment failed due to unauthorized");
       await refreshToken();
-      // reload the page to repeat the payment execution request
+      return;
     }
 
-    console.log("executePayment data:", data);
-    return data;
+    if (statusCode && statusMessage) {
+      resultStatusCode = statusCode;
+      resultStatusMessage = statusMessage;
+    }
+
+    if (trxID) {
+      transactionId = trxID;
+    }
+
+    console.log("executePayment completed with data:", data);
   } catch(err) {
     throw new Error("Failed to execute payment", err as Error);
+  } finally {
+    // Insufficient Balance
+    if (resultStatusCode === "2023") {
+      redirect(`/payment/failure?status=${resultStatusMessage}`);
+    }
+
+    if (resultStatusCode === "0000") {
+      redirect(`/payment/success?status=${resultStatusMessage}&trxID=${transactionId}`);
+    }
+
+    // Payment execution already been called before
+    if (resultStatusCode === "2117") {
+      redirect(`/payment/failure?status=${resultStatusMessage}`);
+    }
   }
 };
 
@@ -237,5 +264,17 @@ export const executePayment = async (paymentID: string) => {
     customerMsisdn: '01770618575',
     statusCode: '0000',
     statusMessage: 'Successful'
+  }
+
+  executePayment completed with data: 
+  { 
+    statusCode: '2023', 
+    statusMessage: 'Insufficient Balance' 
+  }
+
+  executePayment completed with data: 
+  {
+    statusCode: '2117',
+    statusMessage: 'Payment execution already been called before'
   }
 */
