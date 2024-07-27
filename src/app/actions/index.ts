@@ -15,6 +15,8 @@ let BKASH_ID_TOKEN: string;
 let BKASH_REFRESH_TOKEN: string;
 let TOKEN_EXPIRY_TIME: number;
 
+
+
 interface PaymentData {
   athleteName: string;
   amount: number;
@@ -38,24 +40,17 @@ export const startPayment = async (paymentData: PaymentData ) => {
     const { message } = createPaymentResult;
     if (message === "The incoming token has expired") {
       await refreshToken();
-      console.log("Start payment failed due to token expiry");
-      return;
+      throw new Error("Failed to create payment due to expired token");
     }
 
-    const { bkashURL, statusCode } = createPaymentResult;
+    const { statusCode } = createPaymentResult;
     if (statusCode !== "0000" ) {
       throw new Error("Create payment failed", createPaymentResult);
     }
 
-    // save the redirect url as next.js doesn't support redirect inside of try/catch block
-    paymentPageUrl = bkashURL;
+    return createPaymentResult;
   } catch(err) {
-    // Notify user something went wrong
-    console.log("startPayment Error:", err);
-  } finally {
-    if (paymentPageUrl) {
-      redirect(paymentPageUrl);
-    }
+    throw new Error("Failed to start payment", err as Error);
   }
 };
 

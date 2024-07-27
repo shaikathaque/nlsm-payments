@@ -7,6 +7,10 @@ import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { toast } from "./ui/use-toast";
+import ButtonLoading from "./ui/button-loading";
 
 const MIN_AMOUNT_BDT = 1;
 const MAX_AMOUNT_BDT = 20000;
@@ -18,6 +22,24 @@ const formSchema = z.object({
 });
 
 export default function PaymentForm() {
+  const router = useRouter()
+  
+  const mutation = useMutation({
+    mutationFn: startPayment,
+    onSuccess: ({ bkashURL }) => {
+      if (bkashURL) {
+        router.push(bkashURL);
+      }
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error starting payment",
+        description: JSON.stringify(error),
+      })
+    }
+  });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -28,7 +50,7 @@ export default function PaymentForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await startPayment(values);
+    mutation.mutate(values);
   }
 
   return (
@@ -76,7 +98,14 @@ export default function PaymentForm() {
           )}
         />
 
-        <Button type="submit">Proceed to Bkash Payment</Button>
+        {
+          mutation.isPending ? (
+            <ButtonLoading text="Proceed to Bkash Payment" />
+          ) : (
+            <Button type="submit">Proceed to Bkash Payment</Button>
+          )
+        }
+        
       </form>
     </Form>
   )
