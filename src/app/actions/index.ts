@@ -15,102 +15,117 @@ interface PaymentData {
 }
 
 export const startPayment = async (paymentData: PaymentData ) => {
-  console.log("Starting payment", paymentData);
-  try {    
-    const createPaymentResult = await createPayment(paymentData);
-    const { message } = createPaymentResult;
-    if (message === "The incoming token has expired") {
-      throw new Error("Failed to create payment due to expired token");
+  return await Sentry.withServerActionInstrumentation(
+    "startPayment",
+    async () => {
+      try {    
+        const createPaymentResult = await createPayment(paymentData);
+        const { message } = createPaymentResult;
+        if (message === "The incoming token has expired") {
+          throw new Error("Failed to create payment due to expired token");
+        }
+    
+        const { statusCode } = createPaymentResult;
+        if (statusCode !== "0000" ) {
+          throw new Error("Create payment failed", createPaymentResult);
+        }
+    
+        return createPaymentResult;
+      } catch(err) {
+        console.log("Error starting payment", err);
+        Sentry.captureException(err);
+        throw new Error("Failed to start payment", err as Error);
+      }
     }
-
-    const { statusCode } = createPaymentResult;
-    if (statusCode !== "0000" ) {
-      throw new Error("Create payment failed", createPaymentResult);
-    }
-
-    return createPaymentResult;
-  } catch(err) {
-    console.log("Error starting payment", err);
-    Sentry.captureException(err);
-    throw new Error("Failed to start payment", err as Error);
-  }
+  );
+  
 };
 
 const createPayment = async ({ amount, athleteName }: PaymentData) => {
-  try {
-    if (!BKASH_APP_KEY) {
-      throw new Error("Missing bkash app key");
+  return await Sentry.withServerActionInstrumentation(
+    "createPayment",
+    async () => {
+      try {
+        if (!BKASH_APP_KEY) {
+          throw new Error("Missing bkash app key");
+        }
+        if (!BKASH_API_URL) {
+          throw new Error("Missing bkash api url");
+        }
+    
+        const idToken = await getIDToken();
+    
+        const result = await fetch(`${BKASH_API_URL}/create`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: "application/json",
+            authorization: idToken,
+            "x-app-key": BKASH_APP_KEY,
+          },
+          body: JSON.stringify({
+            mode: "0011",
+            payerReference: athleteName,
+            callbackURL: BKASH_CALLBACK_URL,
+            amount: String(amount),
+            currency: "BDT",
+            intent: "sale",
+            merchantInvoiceNumber: new Date().toLocaleString(),
+          })
+        })
+        const data = await result.json();
+        return data;
+      } catch(err) {
+        Sentry.captureException(err);
+        throw new Error("Failed to create payment", err as Error);
+      }
     }
-    if (!BKASH_API_URL) {
-      throw new Error("Missing bkash api url");
-    }
-
-    const idToken = await getIDToken();
-
-    const result = await fetch(`${BKASH_API_URL}/create`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: "application/json",
-        authorization: idToken,
-        "x-app-key": BKASH_APP_KEY,
-      },
-      body: JSON.stringify({
-        mode: "0011",
-        payerReference: athleteName,
-        callbackURL: BKASH_CALLBACK_URL,
-        amount: String(amount),
-        currency: "BDT",
-        intent: "sale",
-        merchantInvoiceNumber: new Date().toLocaleString(),
-      })
-    })
-    const data = await result.json();
-    return data;
-  } catch(err) {
-    Sentry.captureException(err);
-    throw new Error("Failed to create payment", err as Error);
-  }
+  )
 };
 
 export const executePayment = async (paymentID: string) => {
-  try {
-    if (!BKASH_APP_KEY) {
-      throw new Error("Missing bkash app key");
+  return await Sentry.withServerActionInstrumentation(
+    "executePayment",
+    async () => {
+      try {
+        if (!BKASH_APP_KEY) {
+          throw new Error("Missing bkash app key");
+        }
+        if (!BKASH_API_URL) {
+          throw new Error("Missing bkash api url");
+        }
+    
+        const idToken = await getIDToken();
+    
+        const result = await fetch(`${BKASH_API_URL}/execute`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: "application/json",
+            authorization: idToken,
+            "x-app-key": BKASH_APP_KEY,
+          },
+          body: JSON.stringify({
+            paymentID
+          })
+        })
+        const data = await result.json();
+        const { message } = data;
+    
+        if (message === "Unauthorized") {
+          // TODO: handle expired token
+          // await refreshToken();
+          throw new Error("Payment execution failed due to authorization error", message);
+        }
+        console.log("executePayment data:", data);
+        return data;
+      } catch(err) {
+        console.log(err);
+        Sentry.captureException(err);
+        throw new Error("Failed to execute payment", err as Error);
+      }
     }
-    if (!BKASH_API_URL) {
-      throw new Error("Missing bkash api url");
-    }
-
-    const idToken = await getIDToken();
-
-    const result = await fetch(`${BKASH_API_URL}/execute`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: "application/json",
-        authorization: idToken,
-        "x-app-key": BKASH_APP_KEY,
-      },
-      body: JSON.stringify({
-        paymentID
-      })
-    })
-    const data = await result.json();
-    const { message } = data;
-
-    if (message === "Unauthorized") {
-      // TODO: handle expired token
-      // await refreshToken();
-      throw new Error("Payment execution failed due to authorization error", message);
-    }
-    console.log("executePayment data:", data);
-    return data;
-  } catch(err) {
-    console.log(err);
-    Sentry.captureException(err);
-    throw new Error("Failed to execute payment", err as Error);
-  }
+  )
 };
 
 /*

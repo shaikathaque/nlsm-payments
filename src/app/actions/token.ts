@@ -12,7 +12,10 @@ const {
 const supabase = createClient();
 
 export const getIDToken = async () => {
-  const { data, error } = await supabase.from("bkash_tokens").select("id_token, refresh_token, expires_at").order('created_at', { ascending: false }).limit(1);
+  return await Sentry.withServerActionInstrumentation(
+    "getIDToken",
+    async () => {
+      const { data, error } = await supabase.from("bkash_tokens").select("id_token, refresh_token, expires_at").order('created_at', { ascending: false }).limit(1);
 
   if (error) {
     throw new Error(error.message);
@@ -48,66 +51,78 @@ export const getIDToken = async () => {
 
   // Case: token in DB and not expired
   return id_token;
+    }
+  )
 }
 
 export const getAccessToken = async () => {
-  try {
-    if (!BKASH_USERNAME || !BKASH_PASSWORD) {
-      throw new Error("Missing bkash username or password");
+  return await Sentry.withServerActionInstrumentation(
+    "getAccessToken",
+    async () => {
+      try {
+        if (!BKASH_USERNAME || !BKASH_PASSWORD) {
+          throw new Error("Missing bkash username or password");
+        }
+        if (!BKASH_API_URL) {
+          throw new Error("Missing bkash api url");
+        }
+    
+        const result = await fetch(`${BKASH_API_URL}/token/grant`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: "application/json",
+            username: BKASH_USERNAME,
+            password: BKASH_PASSWORD,
+          },
+          body: JSON.stringify({
+            app_key: BKASH_APP_KEY,
+            app_secret: BKASH_APP_SECRET_KEY
+          })
+        });
+        const data = await result.json();
+        return data;
+      } catch(err) {
+        Sentry.captureException(err);
+        throw new Error("Error getting access token", err as Error);
+      }
     }
-    if (!BKASH_API_URL) {
-      throw new Error("Missing bkash api url");
-    }
-
-    const result = await fetch(`${BKASH_API_URL}/token/grant`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: "application/json",
-        username: BKASH_USERNAME,
-        password: BKASH_PASSWORD,
-      },
-      body: JSON.stringify({
-        app_key: BKASH_APP_KEY,
-        app_secret: BKASH_APP_SECRET_KEY
-      })
-    });
-    const data = await result.json();
-    return data;
-  } catch(err) {
-    Sentry.captureException(err);
-    throw new Error("Error getting access token", err as Error);
-  }
+  )
 };
 
 const getRefreshToken = async (refreshToken: string) => {
-  try {
-    if (!BKASH_USERNAME || !BKASH_PASSWORD) {
-      throw new Error("Missing bkash username or password");
+  return await Sentry.withServerActionInstrumentation(
+    "getRefreshToken",
+    async () => {
+      try {
+        if (!BKASH_USERNAME || !BKASH_PASSWORD) {
+          throw new Error("Missing bkash username or password");
+        }
+        if (!BKASH_API_URL) {
+          throw new Error("Missing bkash api url");
+        }
+    
+        const result = await fetch(`${BKASH_API_URL}/token/grant`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: "application/json",
+            username: BKASH_USERNAME,
+            password: BKASH_PASSWORD,
+          },
+          body: JSON.stringify({
+            app_key: BKASH_APP_KEY,
+            app_secret: BKASH_APP_SECRET_KEY,
+            refresh_token: refreshToken
+          })
+        });
+        const data = await result.json();
+        return data;
+      } catch(err) {
+        Sentry.captureException(err);
+        throw new Error("Error refreshing token", err as Error);
+      }
     }
-    if (!BKASH_API_URL) {
-      throw new Error("Missing bkash api url");
-    }
-
-    const result = await fetch(`${BKASH_API_URL}/token/grant`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: "application/json",
-        username: BKASH_USERNAME,
-        password: BKASH_PASSWORD,
-      },
-      body: JSON.stringify({
-        app_key: BKASH_APP_KEY,
-        app_secret: BKASH_APP_SECRET_KEY,
-        refresh_token: refreshToken
-      })
-    });
-    const data = await result.json();
-    return data;
-  } catch(err) {
-    Sentry.captureException(err);
-    throw new Error("Error refreshing token", err as Error);
-  }
+  )
 }
 
