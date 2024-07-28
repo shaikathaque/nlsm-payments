@@ -1,22 +1,12 @@
 'use server';
 
-import { redirect } from "next/navigation";
+import { getIDToken } from "./token";
 
 const { 
-  BKASH_USERNAME,
-  BKASH_PASSWORD,
   BKASH_APP_KEY,
-  BKASH_APP_SECRET_KEY,
   BKASH_API_URL,
   BKASH_CALLBACK_URL
 } = process.env;
-
-let BKASH_ID_TOKEN: string;
-let BKASH_REFRESH_TOKEN: string;
-let TOKEN_EXPIRY_TIME: number;
-
-
-
 interface PaymentData {
   athleteName: string;
   amount: number;
@@ -24,21 +14,10 @@ interface PaymentData {
 }
 
 export const startPayment = async (paymentData: PaymentData ) => {
-  try {
-    // Case: token is not loaded yet
-    // This is incorrect because it the API may load an old ID token
-    if (!BKASH_ID_TOKEN) {
-      const { id_token, refresh_token, expires_in } = await getAccessToken();
-      BKASH_ID_TOKEN = id_token;
-      BKASH_REFRESH_TOKEN = refresh_token;
-      TOKEN_EXPIRY_TIME = Date.now() + expires_in 
-    }
-    
+  try {    
     const createPaymentResult = await createPayment(paymentData);
-
     const { message } = createPaymentResult;
     if (message === "The incoming token has expired") {
-      await refreshToken();
       throw new Error("Failed to create payment due to expired token");
     }
 
@@ -54,35 +33,6 @@ export const startPayment = async (paymentData: PaymentData ) => {
   }
 };
 
-export const getAccessToken = async () => {
-  try {
-    if (!BKASH_USERNAME || !BKASH_PASSWORD) {
-      throw new Error("Missing bkash username or password");
-    }
-    if (!BKASH_API_URL) {
-      throw new Error("Missing bkash api url");
-    }
-
-    const result = await fetch(`${BKASH_API_URL}/token/grant`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: "application/json",
-        username: BKASH_USERNAME,
-        password: BKASH_PASSWORD,
-      },
-      body: JSON.stringify({
-        app_key: BKASH_APP_KEY,
-        app_secret: BKASH_APP_SECRET_KEY
-      })
-    });
-    const data = await result.json();
-    return data;
-  } catch(err) {
-    console.log("Failed to get access token", err);
-  }
-};
-
 const createPayment = async ({ amount, athleteName }: PaymentData) => {
   try {
     if (!BKASH_APP_KEY) {
@@ -92,12 +42,14 @@ const createPayment = async ({ amount, athleteName }: PaymentData) => {
       throw new Error("Missing bkash api url");
     }
 
+    const idToken = await getIDToken();
+
     const result = await fetch(`${BKASH_API_URL}/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Accept: "application/json",
-        authorization: BKASH_ID_TOKEN,
+        authorization: idToken,
         "x-app-key": BKASH_APP_KEY,
       },
       body: JSON.stringify({
@@ -117,40 +69,6 @@ const createPayment = async ({ amount, athleteName }: PaymentData) => {
   }
 };
 
-const refreshToken = async () => {
-  try {
-    if (!BKASH_USERNAME || !BKASH_PASSWORD) {
-      throw new Error("Missing bkash username or password");
-    }
-    if (!BKASH_API_URL) {
-      throw new Error("Missing bkash api url");
-    }
-
-    const result = await fetch(`${BKASH_API_URL}/token/grant`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: "application/json",
-        username: BKASH_USERNAME,
-        password: BKASH_PASSWORD,
-      },
-      body: JSON.stringify({
-        app_key: BKASH_APP_KEY,
-        app_secret: BKASH_APP_SECRET_KEY,
-        refresh_token: BKASH_REFRESH_TOKEN
-      })
-    });
-    const data = await result.json();
-    const { id_token, refresh_token, expires_in } = data;
-    BKASH_ID_TOKEN = id_token;
-    BKASH_REFRESH_TOKEN = refresh_token;    
-    TOKEN_EXPIRY_TIME = Date.now() + expires_in;
-    return data;
-  } catch(err) {
-    console.log("Error refreshing token", err);
-  }
-}
-
 export const executePayment = async (paymentID: string) => {
   try {
     if (!BKASH_APP_KEY) {
@@ -160,12 +78,14 @@ export const executePayment = async (paymentID: string) => {
       throw new Error("Missing bkash api url");
     }
 
+    const idToken = await getIDToken();
+
     const result = await fetch(`${BKASH_API_URL}/execute`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Accept: "application/json",
-        authorization: BKASH_ID_TOKEN,
+        authorization: idToken,
         "x-app-key": BKASH_APP_KEY,
       },
       body: JSON.stringify({
@@ -173,11 +93,11 @@ export const executePayment = async (paymentID: string) => {
       })
     })
     const data = await result.json();
-
     const { message } = data;
 
     if (message === "Unauthorized") {
-      await refreshToken();
+      // TODO: handle expired token
+      // await refreshToken();
       throw new Error("Payment execution failed due to authorization error", message);
     }
     console.log("executePayment data:", data);

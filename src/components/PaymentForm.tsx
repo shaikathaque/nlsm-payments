@@ -56,6 +56,7 @@ export default function PaymentForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <h1 className="text-lg">NLSM Payments Form</h1>
         <FormField
           control={form.control}
           name="athleteName"

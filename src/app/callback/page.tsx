@@ -33,11 +33,7 @@ export default function CallbackPage() {
       router.push(`/payment/failure?status=${statusCode}&statusMessage=${statusMessage}`);
     },
     onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "Sorry, we ran into an issue while processing your payment",
-        description: JSON.stringify(error),
-      })
+      console.log("Execute Payment onError:", error);
     }
   });
 
