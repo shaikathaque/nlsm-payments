@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
+import * as Sentry from "@sentry/nextjs";
 
 const { 
   BKASH_USERNAME,
@@ -74,7 +75,8 @@ export const getAccessToken = async () => {
     const data = await result.json();
     return data;
   } catch(err) {
-    console.log("Failed to get access token", err);
+    Sentry.captureException(err);
+    throw new Error("Error getting access token", err as Error);
   }
 };
 
@@ -104,7 +106,8 @@ const getRefreshToken = async (refreshToken: string) => {
     const data = await result.json();
     return data;
   } catch(err) {
-    console.log("Error refreshing token", err);
+    Sentry.captureException(err);
+    throw new Error("Error refreshing token", err as Error);
   }
 }
 

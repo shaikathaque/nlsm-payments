@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "./ui/use-toast";
 import ButtonLoading from "./ui/button-loading";
 
-import * as Sentry from "@sentry/nextjs";
 
 const MIN_AMOUNT_BDT = 1;
 const MAX_AMOUNT_BDT = 20000;
@@ -34,7 +33,6 @@ export default function PaymentForm() {
       }
     },
     onError: (error) => {
-      Sentry.captureException(error);
       toast({
         variant: "destructive",
         title: "Error starting payment",

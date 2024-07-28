@@ -1,6 +1,7 @@
 'use server';
 
 import { getIDToken } from "./token";
+import * as Sentry from "@sentry/nextjs";
 
 const { 
   BKASH_APP_KEY,
@@ -30,6 +31,7 @@ export const startPayment = async (paymentData: PaymentData ) => {
     return createPaymentResult;
   } catch(err) {
     console.log("Error starting payment", err);
+    Sentry.captureException(err);
     throw new Error("Failed to start payment", err as Error);
   }
 };
@@ -66,6 +68,7 @@ const createPayment = async ({ amount, athleteName }: PaymentData) => {
     const data = await result.json();
     return data;
   } catch(err) {
+    Sentry.captureException(err);
     throw new Error("Failed to create payment", err as Error);
   }
 };
@@ -105,6 +108,7 @@ export const executePayment = async (paymentID: string) => {
     return data;
   } catch(err) {
     console.log(err);
+    Sentry.captureException(err);
     throw new Error("Failed to execute payment", err as Error);
   }
 };
