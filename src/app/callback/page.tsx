@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { executePayment } from "../actions";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useMutation } from "@tanstack/react-query";
+import * as Sentry from "@sentry/nextjs";
 import { toast } from "@/components/ui/use-toast";
 
 export default function CallbackPage() {
@@ -34,6 +35,7 @@ export default function CallbackPage() {
     },
     onError: (error) => {
       console.log("Execute Payment onError:", error);
+      Sentry.captureException(error);
     }
   });
 
