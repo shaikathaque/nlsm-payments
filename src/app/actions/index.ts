@@ -27,6 +27,12 @@ export const startPayment = async (paymentData: PaymentData ) => {
     
         const { statusCode } = createPaymentResult;
         if (statusCode !== "0000" ) {
+          Sentry.captureException(new Error("createPayment statusCode not 0000"), {
+            extra: {
+              createPaymentResult,
+              paymentData
+            }
+          })
           throw new Error("Create payment failed", createPaymentResult);
         }
     
