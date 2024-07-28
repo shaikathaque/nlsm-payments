@@ -35,7 +35,7 @@ export const getIDToken = async () => {
   // refresh token and save in DB
   if (expires_at < Date.now()) {
     // TODO: delete all existing tokens
-
+    console.log("Token expired, refreshing token");
     const { id_token, refresh_token: newRefreshToken, expires_in } = await getRefreshToken(refresh_token);
     await supabase.from("bkash_tokens").upsert({ id_token, refresh_token: newRefreshToken, expires_at: Date.now() + expires_in });
     return id_token;

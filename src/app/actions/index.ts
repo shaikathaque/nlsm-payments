@@ -14,6 +14,7 @@ interface PaymentData {
 }
 
 export const startPayment = async (paymentData: PaymentData ) => {
+  console.log("Starting payment", paymentData);
   try {    
     const createPaymentResult = await createPayment(paymentData);
     const { message } = createPaymentResult;
