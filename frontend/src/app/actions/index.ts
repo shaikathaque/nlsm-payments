@@ -58,6 +58,7 @@ const createPayment = async ({ amount, athleteName }: PaymentData) => {
         if (!BKASH_API_URL) {
           throw new Error("Missing bkash api url");
         }
+        // TODO: check for missing callback url
     
         const idToken = await getIDToken();
     
