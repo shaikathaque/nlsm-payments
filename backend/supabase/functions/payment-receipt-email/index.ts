@@ -5,7 +5,17 @@ const handler = async (request: Request): Promise<Response> => {
   const payload = await request.json();
   console.log("payload", payload);
   const { record } = payload;
-  const  { email, amount, branch, method, athlete_name, bkash_transaction_id } = record;
+  const  { email, amount, branch, method, athlete_name, bkash_transaction_id, payment_status } = record;
+
+  // Check if payment state is COMPLETE
+  if (payment_status !== "COMPLETE") {
+    return new Response(JSON.stringify({ message: "Payment not in complete state" }), {
+      status: 418,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
 
   const body = {
     from: 'onboarding@resend.dev',

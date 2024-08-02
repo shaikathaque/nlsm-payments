@@ -9,6 +9,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useMutation } from "@tanstack/react-query";
 import * as Sentry from "@sentry/nextjs";
 import { toast } from "@/components/ui/use-toast";
+import { recordFailedPayment } from "../actions/payments";
 
 export default function CallbackPage() {
   const router = useRouter()
@@ -39,11 +40,21 @@ export default function CallbackPage() {
     }
   });
 
+  const failureMutation = useMutation({
+    mutationFn: recordFailedPayment,
+    onSettled: (data, error) => {
+      console.log(46, data, error);
+      router.push(`/payment/failure?status=${status}`);
+    }
+  });
+
   useEffect(() => {
     if (status === "success" && paymentId) {
       mutation.mutate(paymentId);
     } else {
-      router.push(`/payment/failure?status=${status}`);
+      if (paymentId) {
+        failureMutation.mutate(paymentId);
+      }
     }
   }, []);
 

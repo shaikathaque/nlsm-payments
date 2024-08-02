@@ -1,5 +1,6 @@
 'use server';
 
+import { recordCompletePayment, recordFailedPayment, recordPendingPayment } from "./payments";
 import { getIDToken } from "./token";
 import * as Sentry from "@sentry/nextjs";
 
@@ -8,13 +9,16 @@ const {
   BKASH_API_URL,
   BKASH_CALLBACK_URL
 } = process.env;
+
 interface PaymentData {
   athleteName: string;
   amount: number;
   email: string;
 }
 
-export const startPayment = async (paymentData: PaymentData ) => {
+
+
+export const startPayment = async (paymentData: PaymentData) => {
   return await Sentry.withServerActionInstrumentation(
     "startPayment",
     async () => {
@@ -35,7 +39,14 @@ export const startPayment = async (paymentData: PaymentData ) => {
           })
           throw new Error("Create payment failed", createPaymentResult);
         }
-    
+
+        recordPendingPayment(
+          {
+            ...paymentData,
+            paymentID: createPaymentResult.paymentID
+          }
+        );
+        
         return createPaymentResult;
       } catch(err) {
         console.log("Error starting payment", err);
@@ -51,6 +62,7 @@ const createPayment = async ({ amount, athleteName }: PaymentData) => {
   return await Sentry.withServerActionInstrumentation(
     "createPayment",
     async () => {
+      console.log(65, "ewfkjbwerfiu32h4rfui42hbru2ihrfde4iufh3euw2hr")
       try {
         if (!BKASH_APP_KEY) {
           throw new Error("Missing bkash app key");
@@ -94,6 +106,7 @@ export const executePayment = async (paymentID: string) => {
   return await Sentry.withServerActionInstrumentation(
     "executePayment",
     async () => {
+      console.log(109);
       try {
         if (!BKASH_APP_KEY) {
           throw new Error("Missing bkash app key");
@@ -117,6 +130,7 @@ export const executePayment = async (paymentID: string) => {
           })
         })
         const data = await result.json();
+        console.log(133, data);
         const { message } = data;
     
         if (message === "Unauthorized") {
@@ -125,15 +139,25 @@ export const executePayment = async (paymentID: string) => {
           throw new Error("Payment execution failed due to authorization error", message);
         }
         console.log("executePayment data:", data);
+        console.log(139, data);
+        if (data?.statusCode === "0000") {
+          recordCompletePayment(paymentID);
+        } else {
+          console.log(143, data)
+          recordFailedPayment(paymentID);
+        }
+
         return data;
       } catch(err) {
         console.log(err);
         Sentry.captureException(err);
+        recordFailedPayment(paymentID);
         throw new Error("Failed to execute payment", err as Error);
       }
     }
   )
 };
+
 
 /*
   Example API responses

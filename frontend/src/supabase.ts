@@ -33,18 +33,42 @@ export type Database = {
         }
         Relationships: []
       }
-      notes: {
+      payments: {
         Row: {
+          amount: string
+          athlete_name: string | null
+          bkash_payment_id: string | null
+          bkash_transaction_id: string | null
+          branch: Database["public"]["Enums"]["branch"]
+          created_at: string
+          email: string
           id: number
-          title: string | null
+          method: Database["public"]["Enums"]["payment_method"]
+          payment_status: Database["public"]["Enums"]["PAYMENT_STATUS"]
         }
         Insert: {
+          amount: string
+          athlete_name?: string | null
+          bkash_payment_id?: string | null
+          bkash_transaction_id?: string | null
+          branch: Database["public"]["Enums"]["branch"]
+          created_at?: string
+          email: string
           id?: number
-          title?: string | null
+          method: Database["public"]["Enums"]["payment_method"]
+          payment_status: Database["public"]["Enums"]["PAYMENT_STATUS"]
         }
         Update: {
+          amount?: string
+          athlete_name?: string | null
+          bkash_payment_id?: string | null
+          bkash_transaction_id?: string | null
+          branch?: Database["public"]["Enums"]["branch"]
+          created_at?: string
+          email?: string
           id?: number
-          title?: string | null
+          method?: Database["public"]["Enums"]["payment_method"]
+          payment_status?: Database["public"]["Enums"]["PAYMENT_STATUS"]
         }
         Relationships: []
       }
@@ -56,7 +80,9 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      branch: "UTTARA_IHSB" | "BASHUNDHARA_SG"
+      payment_method: "BKASH" | "CASH"
+      PAYMENT_STATUS: "IN_PROGRESS" | "COMPLETE" | "FAILED"
     }
     CompositeTypes: {
       [_ in never]: never
