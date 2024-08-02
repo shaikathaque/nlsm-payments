@@ -33,7 +33,7 @@ export const recordPendingPayment = async (paymentData: RecordPendingPaymentPayl
 
         if (error) {
           console.log(error);
-          throw new Error("Failed to record new payment to DB", error);
+          throw new Error(`Failed to record new payment to DB: ${error.message}`);
         }
         return data;
       } catch(err) {
@@ -57,7 +57,7 @@ export const recordCompletePayment = async (paymentId: string) => {
         ).eq('bkash_payment_id', paymentId );
 
         if (error) {
-          throw new Error("Failed to update payment status to complete", error);
+          throw new Error(`Failed to update payment status to complete: error ${error.message}`);
         }
         return data;
       } catch(err) {
@@ -81,7 +81,7 @@ export const recordFailedPayment = async (paymentId: string) => {
         ).eq('bkash_payment_id', paymentId );
         console.log(81, paymentId, data, error);
         if (error) {
-          throw new Error("Failed to update payment status to failed", error);
+          throw new Error(`Failed to update payment status to failed: ${error.message}`);
         }
         return data;
       } catch(err) {
