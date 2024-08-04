@@ -18,9 +18,10 @@ const handler = async (request: Request): Promise<Response> => {
   }
 
   const body = {
-    from: 'onboarding@resend.dev',
+    from: 'team@pay.nlsmbd.com',
     to: email,
     subject: 'NLSM Payment Confirmation',
+    reply_to: "team@nlsmbd.com",
     html: `
       <div>
         <h1>We have received your payment<h1>
