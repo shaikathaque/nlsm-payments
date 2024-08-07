@@ -21,10 +21,11 @@ const formSchema = z.object({
   email: z.string({ required_error: "Email is required" }).email({ message: "Invalid email address" }),
   amount: z.coerce.number({ required_error: "Amount is required", invalid_type_error: "Please enter a valid number" }).gte(MIN_AMOUNT_BDT).lt(MAX_AMOUNT_BDT),
   athleteName: z.string({ required_error: "Athlete name is required" }),
-  branch: z
-    .string({
-      required_error: "Please select a branch.",
-    })
+  // branch: z
+  //   .string({
+  //     required_error: "Please select a branch.",
+  //   })
+  branch: z.enum(["BASHUNDHARA_SG", "UTTARA_IHSB"], { required_error: "Please select a branch." }),
 });
 
 export default function PaymentForm() {
