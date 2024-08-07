@@ -1,3 +1,6 @@
+import { render } from 'npm:@react-email/components';
+import { NLSMReceiptEmail } from './email.tsx';
+
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
 
 const handler = async (request: Request): Promise<Response> => {
@@ -5,7 +8,7 @@ const handler = async (request: Request): Promise<Response> => {
   const payload = await request.json();
   console.log("payload", payload);
   const { record } = payload;
-  const  { email, amount, branch, method, athlete_name, bkash_transaction_id, payment_status } = record;
+  const  { email, amount, branch, method, athlete_name, bkash_transaction_id, payment_status, id, created_at } = record;
 
   // Check if payment state is COMPLETE
   if (payment_status !== "COMPLETE") {
@@ -17,20 +20,23 @@ const handler = async (request: Request): Promise<Response> => {
     });
   }
 
+  const emailHtml = render(NLSMReceiptEmail({
+      email,
+      amount,
+      branch,
+      athlete_name,
+      method,
+      bkash_transaction_id,
+      orderId: id,
+      date: created_at,
+  }))
+
   const body = {
     from: 'team@pay.nlsmbd.com',
     to: email,
     subject: 'NLSM Payment Confirmation',
     reply_to: "team@nlsmbd.com",
-    html: `
-      <div>
-        <h1>We have received your payment<h1>
-        <p>Branch: ${branch}</p>
-        <p>Athlete name: ${athlete_name}</p>
-        <p>Payment method: ${method}</p>
-        <p>Amount: ${amount}</p>
-      </div>
-    `,
+    html: emailHtml,
   }
   console.log("body:", body)
 

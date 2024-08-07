@@ -10,8 +10,8 @@ import {
   Row,
   Section,
   Text,
-} from "@react-email/components";
-import * as React from "react";
+} from "npm:@react-email/components";
+import * as React from "npm:react";
 
 type Props = {
   email: string;
