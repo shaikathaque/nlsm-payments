@@ -8,8 +8,8 @@ type Props = {
 export default function ButtonLoading({ text }: Props) {
   return (
     <Button disabled>
-      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
       {text}
+      <Loader2 className="ml-2 h-4 w-4 animate-spin" />
     </Button>
   )
 }

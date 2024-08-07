@@ -11,6 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "./ui/use-toast";
 import ButtonLoading from "./ui/button-loading";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 
 const MIN_AMOUNT_BDT = 1;
@@ -20,6 +21,10 @@ const formSchema = z.object({
   email: z.string({ required_error: "Email is required" }).email({ message: "Invalid email address" }),
   amount: z.coerce.number({ required_error: "Amount is required", invalid_type_error: "Please enter a valid number" }).gte(MIN_AMOUNT_BDT).lt(MAX_AMOUNT_BDT),
   athleteName: z.string({ required_error: "Athlete name is required" }),
+  branch: z
+    .string({
+      required_error: "Please select a branch.",
+    })
 });
 
 export default function PaymentForm() {
@@ -72,6 +77,28 @@ export default function PaymentForm() {
           )}
         />
 
+        <FormField  
+          control={form.control}
+          name="branch"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Branch</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select branch" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="BASHUNDHARA_SG">Bashundhara (Sports Grill)</SelectItem>
+                  <SelectItem value="UTTARA_IHSB">Uttara (IHSB)</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="amount"
@@ -99,6 +126,8 @@ export default function PaymentForm() {
             </FormItem>
           )}
         />
+
+        
 
         {
           mutation.isPending ? (

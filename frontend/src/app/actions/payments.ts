@@ -9,7 +9,7 @@ interface RecordPendingPaymentPayload {
   email: string;
   amount: number;
   athleteName: string;
-  branch?: "UTTARA_IHSB" | "BASHUNDHARA_SG" ;
+  branch: "UTTARA_IHSB" | "BASHUNDHARA_SG" ;
   paymentID: string;
 }
 
@@ -17,7 +17,7 @@ export const recordPendingPayment = async (paymentData: RecordPendingPaymentPayl
   return await Sentry.withServerActionInstrumentation(
     "recordPendingPayment",
     async () => {
-      const { email, amount, athleteName, branch = "BASHUNDHARA_SG", paymentID } = paymentData;
+      const { email, amount, athleteName, branch, paymentID } = paymentData;
       try {
         const { data, error } = await supabase.from("payments").insert(
           {
