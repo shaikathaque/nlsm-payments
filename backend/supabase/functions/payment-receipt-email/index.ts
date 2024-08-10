@@ -28,7 +28,7 @@ const handler = async (request: Request): Promise<Response> => {
       method,
       bkash_transaction_id,
       orderId: id,
-      date: created_at,
+      date: new Date(created_at).toLocaleDateString("en-GB", { timeZone: "Asia/Dhaka" })
   }))
 
   const body = {
