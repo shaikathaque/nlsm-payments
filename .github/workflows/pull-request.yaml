@@ -10,6 +10,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
 
     steps:
       - uses: actions/checkout@v3
@@ -19,15 +22,13 @@ jobs:
           version: latest
 
       - name: Start Supabase local development setup
+        working-directory: ./app
         run: supabase db start
-
-      - name: Check Supabase status
-        run: supabase status -o env
 
       - name: Verify generated types are checked in
         run: |
-          supabase gen types typescript --local > database.types.ts
-          if ! git diff --ignore-space-at-eol --exit-code --quiet database.types.ts; then
+          supabase gen types typescript --local > ../database.types.ts
+          if ! git diff --ignore-space-at-eol --exit-code --quiet ../database.types.ts; then
             echo "Detected uncommitted changes after build. See status below:"
             git diff
             exit 1
