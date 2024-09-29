@@ -45,14 +45,16 @@ export const recordPendingPayment = async (paymentData: RecordPendingPaymentPayl
   )
 };
 
-export const recordCompletePayment = async (paymentId: string) => {
+export const recordCompletePayment = async (paymentId: string, executePaymentData: any) => {
   return await Sentry.withServerActionInstrumentation(
     "recordCompletePayment",
     async () => {
       try {
         const { data, error } = await supabase.from("payments").update(
           {
-            payment_status: "COMPLETE"
+            payment_status: "COMPLETE",
+            bkash_transaction_id: executePaymentData.trxID,
+            phone_number: executePaymentData.customerMsisdn,
           }
         ).eq('bkash_payment_id', paymentId );
 

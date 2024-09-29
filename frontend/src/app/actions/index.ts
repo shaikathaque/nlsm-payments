@@ -142,7 +142,7 @@ export const executePayment = async (paymentID: string) => {
         console.log("executePayment data:", data);
         console.log(139, data);
         if (data?.statusCode === "0000") {
-          recordCompletePayment(paymentID);
+          recordCompletePayment(paymentID, data);
         } else {
           console.log(143, data)
           recordFailedPayment(paymentID);
