@@ -17,6 +17,19 @@ const options = {
   },
 };
 
+
+const testRecord = {
+  created_at: "2024-10-05T00:00:00.000Z",
+  athlete_id: "1",
+  scores: {
+    passing: 9,
+    dribbling: 7,
+    discipline: 8,
+    attendance: 10,
+  },
+  comments: "Rising Star!",
+}
+
 // Test the creation and functionality of the Supabase client
 const testClientCreation = async () => {
   const client: SupabaseClient = createClient(
@@ -49,18 +62,7 @@ const testBasicReportGeneration = async () => {
 
   const { data: func_data, error: func_error } = await client.functions.invoke("athlete-progress-report", {
     body: {
-      record: {
-        athlete_id: "999",
-        year: 2024,
-        quarter: 4,
-        passing: 9,
-        dribbling: 7,
-        shooting: 6,
-        discipline: 10,
-        awareness: 9,
-        attendance: 10,
-        comments: "Rising Star!",
-      }
+      record: testRecord
     }
   });
 

@@ -9,16 +9,16 @@ insert into athlete_progress
   (athlete_id, comments, scores)
 values
   -- Christiano Ronaldo
-  (1, 'Works hard, needs to listen to coach more.', '[{"passing": 1, "dribbling": 10, "discipline": 5, "attendance": 5}]'),
-  (1, 'Improving', '[{"passing": 2, "dribbling": 10, "discipline": 6, "attendance": 6}]'),
-  (1, 'Can do better', '[{"passing": 4, "dribbling": 10, "discipline": 6, "attendance": 6}]'),
+  (1, 'Works hard, needs to listen to coach more.', '{"passing": 1, "dribbling": 10, "discipline": 5, "attendance": 5}'),
+  (1, 'Improving', '{"passing": 2, "dribbling": 10, "discipline": 6, "attendance": 6}'),
+  (1, 'Can do better', '{"passing": 4, "dribbling": 10, "discipline": 6, "attendance": 6}'),
 
   -- Messi
-  (2, 'Megesterial', '[{"passing": 10, "dribbling": 10, "discipline": 10, "attendance": 10}]'),
-  (2, 'Keep up the good work', '[{"passing": 10, "dribbling": 10, "discipline": 10, "attendance": 10}]'),
-  (2, 'Well done!', '[{"passing": 10, "dribbling": 10, "discipline": 10, "attendance": 10}]'),
+  (2, 'Megesterial', '{"passing": 10, "dribbling": 10, "discipline": 10, "attendance": 10}'),
+  (2, 'Keep up the good work', '{"passing": 10, "dribbling": 10, "discipline": 10, "attendance": 10}'),
+  (2, 'Well done!', '{"passing": 10, "dribbling": 10, "discipline": 10, "attendance": 10}'),
 
   -- Neymar
-  (3, 'Needs to keep working harder', '[{"passing": 7, "dribbling": 10, "discipline": 7, "attendance": 8}]'),
+  (3, 'Needs to keep working harder', '{"passing": 7, "dribbling": 10, "discipline": 7, "attendance": 8}'),
   (3, 'Out due to injury', NULL),
   (3, 'Still recovering from surgery', NULL);
