@@ -92,7 +92,7 @@ export const NLSMReceiptEmail = ({
 
       {/* Title */}
       <Section>
-            <Text className="text-center font-semibold">Player Evaluation: <span className="font-normal">Shaikat Haque</span></Text>
+            <Text className="text-center font-semibold">Player Evaluation: <span className="font-normal">{first_name} {last_name}</span></Text>
             <Text className="text-center font-semibold">Date: <span className="font-normal">{date}</span></Text>
       </Section>
 

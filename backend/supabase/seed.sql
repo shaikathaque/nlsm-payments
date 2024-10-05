@@ -5,21 +5,20 @@ values
   (2, 'Lionel', 'Messi', '1995-03-10', 'UTTARA_IHSB', 'example2@gmail.io', '0987654321'),
   (3, 'Neymar', 'Santos', '2000-01-01', 'BASHUNDHARA_SG', 'example3@gmail.io', '1029384756');
 
-
 insert into athlete_progress
-  (athlete_id, passing, dribbling, discipline, attendance, comments)
+  (athlete_id, comments, scores)
 values
   -- Christiano Ronaldo
-  (1, 1, 10, 5, 5, 'Works hard, needs to listen to coach more.'),
-  (1, 2, 10, 6, 6, 'Improving'),
-  (1, 4, 10, 6, 6, 'Can do better'),
+  (1, 'Works hard, needs to listen to coach more.', '[{"passing": 1, "dribbling": 10, "discipline": 5, "attendance": 5}]'),
+  (1, 'Improving', '[{"passing": 2, "dribbling": 10, "discipline": 6, "attendance": 6}]'),
+  (1, 'Can do better', '[{"passing": 4, "dribbling": 10, "discipline": 6, "attendance": 6}]'),
 
   -- Messi
-  (2, 10, 10, 10, 10, 'Megesterial'),
-  (2, 10, 10, 10, 10, 'Keep up the good work'),
-  (2, 10, 10, 10, 10, 'Well done!'),
+  (2, 'Megesterial', '[{"passing": 10, "dribbling": 10, "discipline": 10, "attendance": 10}]'),
+  (2, 'Keep up the good work', '[{"passing": 10, "dribbling": 10, "discipline": 10, "attendance": 10}]'),
+  (2, 'Well done!', '[{"passing": 10, "dribbling": 10, "discipline": 10, "attendance": 10}]'),
 
   -- Neymar
-  (3, 7, 10, 7, 8, 'Needs to keep working harder'),
-  (3, NULL, NULL, NULL, NULL, 'Out due to injury'),
-  (3, NULL, NULL, NULL, NULL, 'Still recovering from surgery');
+  (3, 'Needs to keep working harder', '[{"passing": 7, "dribbling": 10, "discipline": 7, "attendance": 8}]'),
+  (3, 'Out due to injury', NULL),
+  (3, 'Still recovering from surgery', NULL);
