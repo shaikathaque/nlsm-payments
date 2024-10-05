@@ -59,7 +59,7 @@ const testBasicReportGeneration = async () => {
         discipline: 10,
         awareness: 9,
         attendance: 10,
-        comments: "Rising Start!",
+        comments: "Rising Star!",
       }
     }
   });

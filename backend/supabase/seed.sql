@@ -7,19 +7,19 @@ values
 
 
 insert into athlete_progress
-  (athlete_id, year, quarter, passing, dribbling, shooting, discipline, awareness, attendance, comments)
+  (athlete_id, passing, dribbling, discipline, attendance, comments)
 values
   -- Christiano Ronaldo
-  (1, 2024, 1, 1, 10, 10, 5, 5, 5, 'Works hard, needs to listen to coach more.'),
-  (1, 2024, 2, 2, 10, 10, 6, 6, 6, 'Improving'),
-  (1, 2024, 3, 4, 10, 10, 6, 6, 6, 'Can do better'),
+  (1, 1, 10, 5, 5, 'Works hard, needs to listen to coach more.'),
+  (1, 2, 10, 6, 6, 'Improving'),
+  (1, 4, 10, 6, 6, 'Can do better'),
 
   -- Messi
-  (2, 2024, 1, 10, 10, 10, 10, 10, 10, 'Megesterial'),
-  (2, 2024, 2, 10, 10, 10, 10, 10, 10, 'Keep up the good work'),
-  (2, 2024, 3, 10, 10, 10, 10, 10, 10, 'Well done!'),
+  (2, 10, 10, 10, 10, 'Megesterial'),
+  (2, 10, 10, 10, 10, 'Keep up the good work'),
+  (2, 10, 10, 10, 10, 'Well done!'),
 
   -- Neymar
-  (3, 2024, 1, 7, 10, 8, 7, 8, 8, 'Needs to keep working harder'),
-  (3, 2024, 2, NULL, NULL, NULL, NULL, NULL, NULL, 'Out due to injury'),
-  (3, 2024, 3, NULL, NULL, NULL, NULL, NULL, NULL, 'Still recovering from surgery');
+  (3, 7, 10, 7, 8, 'Needs to keep working harder'),
+  (3, NULL, NULL, NULL, NULL, 'Out due to injury'),
+  (3, NULL, NULL, NULL, NULL, 'Still recovering from surgery');
