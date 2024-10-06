@@ -20,7 +20,7 @@ const options = {
 
 const testRecord = {
   created_at: "2024-10-05T00:00:00.000Z",
-  athlete_id: "1",
+  athlete_id: 1,
   scores: {
     passing: 9,
     dribbling: 7,
@@ -62,6 +62,7 @@ const testBasicReportGeneration = async () => {
 
   const { data: func_data, error: func_error } = await client.functions.invoke("athlete-progress-report", {
     body: {
+      type: "INSERT",
       record: testRecord
     }
   });
@@ -75,7 +76,7 @@ const testBasicReportGeneration = async () => {
   console.log(JSON.stringify(func_data, null, 2));
 
   // Assert that the function returned the expected result
-  assert(func_data.length > 0, "Function should return a non-empty result.");
+  assert(func_data, "Function should return a response object.");
 };
 
 // Register and run the tests

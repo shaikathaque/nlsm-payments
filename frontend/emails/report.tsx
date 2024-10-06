@@ -15,43 +15,24 @@ import {
 import { Tailwind, Button } from "@react-email/components";
 import * as React from "react";
 
-interface Score {
-  category: string;
-  score: number;
+type Scores = {
+  [key: string]: number;
 };
 
 type Props = {
   date: string;
   first_name: string;
   last_name: string;
-  scores: Score[]
-  comment: string;
+  scores: Scores;
+  comments: string;
 }
 
-const testScores: Score[] = [
-  {
-    category: "Passing",
-    score: 10
-  },
-  {
-    category: "Dribbling",
-    score: 8
-  },
-  {
-    category: "Attendance",
-    score: 5
-  },
-  {
-    category: "Discipline",
-    score: 10
-  },
-]
-
-export const NLSMReceiptEmail = ({
-  date = "Oct 5, 2024",
-  first_name = "Shaikat",
-  last_name = "Haque",
-  scores = testScores
+export const NLSMReportEmail = ({
+  date = "",
+  first_name = "",
+  last_name = "",
+  scores = {},
+  comments = ""
 }: Props) => (
   <Tailwind
     config={{
@@ -106,13 +87,13 @@ export const NLSMReceiptEmail = ({
             <Text className="font-semibold">Score <span className="font-normal">(out of 10)</span></Text>
           </Column>
         </Row>
-        {scores.map((score, i) => (
+        {Object.entries(scores).map(([key, value], i) => (
           <Row key={i}>
             <Column align="center" className="h-[40px] w-1/3">
-              <Text>{score.category}</Text>
+              <Text>{key}</Text>
             </Column>
             <Column align="center" className="h-[40px] w-1/3">
-              <Text>{score.score}</Text>
+              <Text>{value}</Text>
             </Column>
           </Row>
         ))}
@@ -121,7 +102,7 @@ export const NLSMReceiptEmail = ({
       {/* Comments */}
       <Section className="mt-10 px-32">
         <Text className="font-semibold">Coaches Comments:</Text>
-        <Text className="">{lorenIpsum}</Text>
+        <Text className="">{comments}</Text>
       </Section>
 
 
@@ -130,6 +111,4 @@ export const NLSMReceiptEmail = ({
   </Tailwind>
 );
 
-export default NLSMReceiptEmail;
-
-const lorenIpsum = `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.`
+export default NLSMReportEmail;

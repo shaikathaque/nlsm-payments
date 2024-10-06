@@ -1,9 +1,9 @@
 insert into athletes
   (id, first_name, last_name, dob, branch, email, phone)
 values
-  (1, 'Christiano', 'Ronaldo', '1995-04-08', 'BASHUNDHARA_SG', 'example1@gmail.com', '1234567890'),
-  (2, 'Lionel', 'Messi', '1995-03-10', 'UTTARA_IHSB', 'example2@gmail.io', '0987654321'),
-  (3, 'Neymar', 'Santos', '2000-01-01', 'BASHUNDHARA_SG', 'example3@gmail.io', '1029384756');
+  (1, 'Christiano', 'Ronaldo', '1995-04-08', 'BASHUNDHARA_SG', 'nlsmbd.dev@gmail.com', '1234567890'),
+  (2, 'Lionel', 'Messi', '1995-03-10', 'UTTARA_IHSB', 'nlsmbd.dev@gmail.com', '0987654321'),
+  (3, 'Neymar', 'Santos', '2000-01-01', 'BASHUNDHARA_SG', 'nlsmbd.dev@gmail.com', '1029384756');
 
 insert into athlete_progress
   (athlete_id, comments, scores)
