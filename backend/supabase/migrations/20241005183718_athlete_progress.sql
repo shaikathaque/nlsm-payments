@@ -122,3 +122,61 @@ grant trigger on table "public"."athletes" to "service_role";
 grant truncate on table "public"."athletes" to "service_role";
 
 grant update on table "public"."athletes" to "service_role";
+
+set check_function_bodies = off;
+
+CREATE OR REPLACE FUNCTION public.call_edge_function_from_trigger()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    function_name TEXT;
+    project_url TEXT;
+    full_url TEXT;
+BEGIN
+    function_name := TG_ARGV[0];
+
+    -- Fetch the project URL
+    project_url := get_secret('project_url');
+
+    -- Construct the full URL
+    full_url := project_url || '/functions/v1/' || function_name;
+
+    -- Call the http_request function with the constructed URL
+    PERFORM net.http_post(
+        url := full_url,
+        headers := jsonb_build_object(
+            'Content-Type', 'application/json',
+            'Authorization', 'Bearer ' || get_secret('anon_key')
+        ),
+        body := jsonb_build_object(
+            'type', TG_OP,
+            'table', TG_TABLE_NAME,
+            'schema', TG_TABLE_SCHEMA,
+            'record', NEW,
+            'old_record', OLD
+        ),
+        timeout_milliseconds := 5000
+    );
+
+    RETURN NULL;
+END;
+$function$
+;
+
+CREATE OR REPLACE FUNCTION public.get_secret(secret_name text)
+ RETURNS text
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$ 
+DECLARE 
+   secret text;
+BEGIN
+   SELECT decrypted_secret INTO secret FROM vault.decrypted_secrets WHERE name = secret_name;
+   RETURN secret;
+END;
+$function$
+;
+
+CREATE TRIGGER athlete_progress_report_email AFTER INSERT ON public.athlete_progress FOR EACH ROW EXECUTE FUNCTION call_edge_function_from_trigger('athlete-progress-report');
