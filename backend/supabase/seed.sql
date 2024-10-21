@@ -5,7 +5,14 @@ values
   (2, 'Lionel', 'Messi', '1995-03-10', 'UTTARA_IHSB', 'nlsmbd.dev@gmail.com', '0987654321'),
   (3, 'Neymar', 'Santos', '2000-01-01', 'BASHUNDHARA_SG', 'nlsmbd.dev@gmail.com', '1029384756');
 
--- Commenting out to see if this causes error in CI
+SELECT vault.create_secret(
+    'http://host.docker.internal:54321', 
+    'project_url', 
+    'URL to be used for calling edge functions, this is set here because we want to develop edge functions with webhohks from database triggers in multiple environments'
+);
+
+-- Commenting out because we don't want to end up triggering emails during every seed
+-- Especially during the CI/CD pipeline
 -- insert into athlete_progress
 --   (athlete_id, comments, scores)
 -- values
