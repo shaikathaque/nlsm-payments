@@ -12,6 +12,17 @@ export const supabaseClient = createClient(
 );
 
 const handler = async (request: Request): Promise<Response> => {
+
+  if (!RESEND_API_KEY) {
+    console.log("Missing RESEND_API_KEY");
+    return new Response(JSON.stringify({ message: "RESEND_API_KEY not found in environment variables." }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+
   const payload = await request.json();
 
   if (payload && payload?.type !== "INSERT") {
@@ -26,7 +37,7 @@ const handler = async (request: Request): Promise<Response> => {
   const { record } = payload;
   const  { 
     athlete_id,
-    created_at,
+    date,
     scores,
     comments,
   } = record;
@@ -39,10 +50,10 @@ const handler = async (request: Request): Promise<Response> => {
     .single();
 
   console.log("athlete", athlete);
-  console.log("athleteProgress", record)
+  console.log("athlete_progress record:", record);
 
   const emailHtml = await render(NLSMReportEmail({
-    date: created_at,
+    date,
     first_name: athlete?.first_name,
     last_name: athlete?.last_name,
     scores,

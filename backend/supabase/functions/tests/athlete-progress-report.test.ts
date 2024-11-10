@@ -19,13 +19,13 @@ const options = {
 
 
 const testRecord = {
-  created_at: "2024-10-05T00:00:00.000Z",
+  date: "2024/11/10",
   athlete_id: 1,
   scores: {
-    passing: 9,
-    dribbling: 7,
-    discipline: 8,
-    attendance: 10,
+    passing: 5,
+    dribbling: 5,
+    discipline: 4,
+    attendance: 3,
   },
   comments: "Rising Star!",
 }
