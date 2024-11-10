@@ -46,8 +46,8 @@ export const NLSMReceiptEmail = ({
           <Row>
             <Column>
               <Img
-                src="https://nlsmbd.com/wp-content/uploads/2020/12/site-logo-white-background.png"
-                height="100"
+                src="https://nlsmbd.com/wp-content/uploads/2024/11/nl-academy-logo.png"
+                width={200}
                 alt="NLSM Logo"
               />
             </Column>
@@ -125,7 +125,7 @@ export const NLSMReceiptEmail = ({
           <Row>
             <Column style={{ width: "64px" }}>
               <Img
-                src="http://nlsmbd.com/wp-content/uploads/2023/04/cropped-Site-Title-Image.png"
+                src="https://nlsmbd.com/wp-content/uploads/2024/11/nl-yellow-logo.png"
                 width="64"
                 height="64"
                 alt="NL Academy Logo"

@@ -1,6 +1,4 @@
 import {
-  Body,
-  Container,
   Column,
   Head,
   Hr,
@@ -11,8 +9,8 @@ import {
   Section,
   Text,
   Font,
+  Tailwind,
 } from "@react-email/components";
-import { Tailwind, Button } from "@react-email/components";
 import * as React from "react";
 
 type Scores = {
@@ -25,6 +23,11 @@ type Props = {
   last_name: string;
   scores: Scores;
   comments: string;
+}
+
+function getMonthFromDateString(date: string) {
+  if (!date) return "";
+  return new Date(date).toLocaleString('default', { month: 'long' });
 }
 
 export const NLSMReportEmail = ({
@@ -61,8 +64,8 @@ export const NLSMReportEmail = ({
         <Row>
           <Column>
             <Img
-              src="https://nlsmbd.com/wp-content/uploads/2020/12/site-logo-white-background.png"
-              height="100"
+              src="https://nlsmbd.com/wp-content/uploads/2024/11/nl-academy-logo.png"
+              width="200"
               alt="NLSM Logo"
             />
           </Column>
@@ -74,7 +77,7 @@ export const NLSMReportEmail = ({
       {/* Title */}
       <Section>
             <Text className="text-center font-semibold">Player Evaluation: <span className="font-normal">{first_name} {last_name}</span></Text>
-            <Text className="text-center font-semibold">Date: <span className="font-normal">{date}</span></Text>
+            <Text className="text-center font-semibold">For the month of: <span className="font-normal">{getMonthFromDateString(date)}</span></Text>
       </Section>
 
       {/* Scores */}
@@ -84,13 +87,13 @@ export const NLSMReportEmail = ({
             <Text className="font-semibold">Category</Text>
           </Column>
           <Column align="center" className="h-[40px] w-1/3">
-            <Text className="font-semibold">Score <span className="font-normal">(out of 10)</span></Text>
+            <Text className="font-semibold">Score <span className="font-normal">(out of 5)</span></Text>
           </Column>
         </Row>
         {Object.entries(scores).map(([key, value], i) => (
           <Row key={i}>
             <Column align="center" className="h-[40px] w-1/3">
-              <Text>{key}</Text>
+              <Text>{key.charAt(0).toUpperCase() + key.slice(1)}</Text>
             </Column>
             <Column align="center" className="h-[40px] w-1/3">
               <Text>{value}</Text>
