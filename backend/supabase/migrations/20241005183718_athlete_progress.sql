@@ -180,3 +180,9 @@ $function$
 ;
 
 CREATE TRIGGER athlete_progress_report_email AFTER INSERT ON public.athlete_progress FOR EACH ROW EXECUTE FUNCTION call_edge_function_from_trigger('athlete-progress-report');
+
+alter table "public"."athlete_progress" add column "date" date not null;
+
+alter table "public"."athlete_progress" alter column "athlete_id" set not null;
+
+alter table "public"."athlete_progress" alter column "scores" set not null;

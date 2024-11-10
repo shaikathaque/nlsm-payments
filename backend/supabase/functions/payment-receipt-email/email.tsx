@@ -46,7 +46,7 @@ export const NLSMReceiptEmail = ({
           <Row>
             <Column>
               <Img
-                src="https://nlsmbd.com/wp-content/uploads/2020/12/site-logo-white-background.png"
+                src="https://nlsmbd.com/wp-content/uploads/2024/11/nl-academy-logo.png"
                 height="100"
                 alt="NLSM Logo"
               />
