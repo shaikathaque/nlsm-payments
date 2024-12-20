@@ -25,7 +25,7 @@ const formSchema = z.object({
   //   .string({
   //     required_error: "Please select a branch.",
   //   })
-  branch: z.enum(["BASHUNDHARA_SG", "UTTARA_IHSB"], { required_error: "Please select a branch." }),
+  branch: z.enum(["BASHUNDHARA_SG", "UTTARA_IHSB", "100FT_HGT"], { required_error: "Please select a branch." }),
 });
 
 export default function PaymentForm() {
@@ -93,6 +93,7 @@ export default function PaymentForm() {
                 <SelectContent>
                   <SelectItem value="BASHUNDHARA_SG">Bashundhara (Sports Grill)</SelectItem>
                   <SelectItem value="UTTARA_IHSB">Uttara (IHSB)</SelectItem>
+                  <SelectItem value="100FT_HGT">100ft (The Hangout)</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

@@ -9,7 +9,7 @@ interface RecordPendingPaymentPayload {
   email: string;
   amount: number;
   athleteName: string;
-  branch: "UTTARA_IHSB" | "BASHUNDHARA_SG" ;
+  branch: "UTTARA_IHSB" | "BASHUNDHARA_SG" | "100FT_HGT";
   paymentID: string;
 }
 

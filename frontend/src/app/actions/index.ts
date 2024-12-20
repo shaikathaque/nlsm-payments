@@ -14,7 +14,7 @@ interface PaymentData {
   athleteName: string;
   amount: number;
   email: string;
-  branch: "BASHUNDHARA_SG" | "UTTARA_IHSB";
+  branch: "BASHUNDHARA_SG" | "UTTARA_IHSB" | "100FT_HGT";
 }
 
 
