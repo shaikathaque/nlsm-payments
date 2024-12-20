@@ -7,28 +7,118 @@ export type Json =
   | Json[]
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          operationName?: string
+          query?: string
+          variables?: Json
+          extensions?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
+      athlete_progress: {
+        Row: {
+          athlete_id: number
+          comments: string | null
+          created_at: string
+          date: string
+          id: number
+          scores: Json
+        }
+        Insert: {
+          athlete_id: number
+          comments?: string | null
+          created_at?: string
+          date: string
+          id?: number
+          scores: Json
+        }
+        Update: {
+          athlete_id?: number
+          comments?: string | null
+          created_at?: string
+          date?: string
+          id?: number
+          scores?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "athlete_progress_athlete_id_fkey"
+            columns: ["athlete_id"]
+            isOneToOne: false
+            referencedRelation: "athletes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      athletes: {
+        Row: {
+          branch: Database["public"]["Enums"]["branch"]
+          created_at: string
+          dob: string
+          email: string | null
+          first_name: string
+          id: number
+          last_name: string
+          phone: string | null
+        }
+        Insert: {
+          branch: Database["public"]["Enums"]["branch"]
+          created_at?: string
+          dob: string
+          email?: string | null
+          first_name: string
+          id?: number
+          last_name: string
+          phone?: string | null
+        }
+        Update: {
+          branch?: Database["public"]["Enums"]["branch"]
+          created_at?: string
+          dob?: string
+          email?: string | null
+          first_name?: string
+          id?: number
+          last_name?: string
+          phone?: string | null
+        }
+        Relationships: []
+      }
       bkash_tokens: {
         Row: {
           created_at: string
           expires_at: number | null
-          id: number
-          id_token: string | null
+          id_token: string
           refresh_token: string | null
         }
         Insert: {
           created_at?: string
           expires_at?: number | null
-          id?: number
-          id_token?: string | null
+          id_token: string
           refresh_token?: string | null
         }
         Update: {
           created_at?: string
           expires_at?: number | null
-          id?: number
-          id_token?: string | null
+          id_token?: string
           refresh_token?: string | null
         }
         Relationships: []
@@ -77,10 +167,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_secret: {
+        Args: {
+          secret_name: string
+        }
+        Returns: string
+      }
     }
     Enums: {
-      branch: "UTTARA_IHSB" | "BASHUNDHARA_SG"
+      branch: "UTTARA_IHSB" | "BASHUNDHARA_SG" | "100FT_HGT"
       payment_method: "BKASH" | "CASH"
       PAYMENT_STATUS: "IN_PROGRESS" | "COMPLETE" | "FAILED"
     }
@@ -171,3 +266,19 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
