@@ -20,7 +20,7 @@ const handler = async (request: Request): Promise<Response> => {
     });
   }
 
-  const emailHtml = render(NLSMReceiptEmail({
+  const emailHtml = await render(NLSMReceiptEmail({
       email,
       amount,
       branch,
