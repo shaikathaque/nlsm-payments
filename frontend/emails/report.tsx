@@ -1,7 +1,6 @@
 import {
   Column,
   Head,
-  Hr,
   Html,
   Img,
   Preview,
@@ -129,7 +128,7 @@ export const NLSMReportEmail = ({
       },
     }}
   >
-    <Html className="my-10 mx-14">
+    <Html className="my-10 mx-4 md:mx-14">
       <Head>
         <Font
           fontFamily="Inter"
@@ -156,33 +155,39 @@ export const NLSMReportEmail = ({
 
       {/* Title */}
       <Section>
-            <Text className="text-4xl font-extrabold text-[#185f34]">PROGRESS REPORT</Text>
+            <Text className="text-3xl md:text-5xl font-extrabold text-[#185f34]">PROGRESS REPORT</Text>
             <Text>{getQuarterInfo(date)}</Text>
       </Section>
 
-      {/* Details */}
-      <Section className="pr-20">
-        <Row className="">
-          <Column className="w-1/2 pr-5">
+      {/* Key Details */}
+      <Section>
+        <div className="grid grid-cols-1 md:grid-cols-2 md:gap-10 md:pr-48">
+          {/* Name */}
+          <div>
             <Text className="">Name: <span className="font-semibold">{first_name} {last_name}</span></Text>
             <div className="w-full border-solid border-b-2 border-gray-200"/>
-          </Column>
-          <Column className="w-1/2">
-           <Text>Age: <span className="font-semibold">{getAgeFromDateString(dob)}</span></Text>
-           <div className="w-full border-solid border-b-2 border-gray-200"/>
-          </Column>
-        </Row>
+          </div>
+        
+          {/* Age */}
+          <div>
+            <Text>Age: <span className="font-semibold">{getAgeFromDateString(dob)}</span></Text>
+            <div className="w-full border-solid border-b-2 border-gray-200"/>
+          </div>
 
-        <Row className="mt-4">
-          <Column className="w-1/2 pr-5">
+          {/* Category */}
+          <div>
             <Text>Category: <span className="font-semibold">{getAgeCategory(dob)}</span></Text>
             <div className="w-full border-solid border-b-2 border-gray-200"/>
-          </Column>
-          <Column className="w-1/2">
-           <Text>Branch: <span className="font-semibold">{getBranchFullName(branch)}</span></Text>
-           <div className="w-full border-solid border-b-2 border-gray-200"/>
-          </Column>
-        </Row>
+          </div>
+
+          {/* Branch */}
+          <div>
+            <Text>Branch: <span className="font-semibold">{getBranchFullName(branch)}</span></Text>
+            <div className="w-full border-solid border-b-2 border-gray-200"/>
+          </div>
+
+        </div>
+
       </Section>
 
       {/*  Grading Scale */}
@@ -204,33 +209,33 @@ export const NLSMReportEmail = ({
       <Section className="mt-20">
 
         {/* Table */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
 
           {/* HEADER */}
-          <div className="col-span-1 bg-slate-200">
+          <div className="md:col-span-1 bg-slate-200">
             <Text className="font-semibold text-center">CATEGORY</Text>
           </div>
-          <div className="col-span-3 bg-slate-200">
+          <div className="md:col-span-3 bg-slate-200">
             <Text className="font-semibold pl-5">SCORE</Text>
           </div>
 
           {/* Scores */}
           {Object.entries(scores).map(([key, value], i) => (
             <>
-              <div className="col-span-1 bg-[#185f34]" key={`category-${i}`}>
+              <div className="md:col-span-1 bg-[#185f34]" key={`category-${i}`}>
                 <Text className="text-white font-semibold pl-5">{key.charAt(0).toUpperCase() + key.slice(1)}</Text>
               </div>
-              <div className="col-span-3 bg-slate-100" key={`score-${i}`}>
+              <div className="md:col-span-3 bg-slate-100" key={`score-${i}`}>
                 <Text className="font-semibold pl-5">{renderStars(value)}</Text>
               </div>
             </>
           ))}
 
           {/* Comments */}
-          <div className="col-span-1 bg-slate-200 min-h-[120px]">
-            <Text className="font-semibold pl-5">Coach's comments</Text>
+          <div className="md:col-span-1 bg-slate-200 min-h-[120px]">
+            <Text className="font-semibold px-5 md:pl-5 text-wrap">Coach's comments</Text>
           </div>
-          <div className="col-span-3 bg-slate-100 min-h-[120px]">
+          <div className="md:col-span-3 bg-slate-100 min-h-[120px]">
             <Text className="px-5">{comments}</Text>
           </div>
 
