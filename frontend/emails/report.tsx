@@ -23,19 +23,100 @@ type Props = {
   last_name: string;
   scores: Scores;
   comments: string;
+  dob: string;
+  branch: string;
 }
 
-function getMonthFromDateString(date: string) {
-  if (!date) return "";
-  return new Date(date).toLocaleString('default', { month: 'long' });
+function getQuarterInfo(date: string): string {
+  if (!date) return "Invalid date";
+
+  const parsedDate = new Date(date);
+  if (isNaN(parsedDate.getTime())) return "Invalid date";
+
+  const year = parsedDate.getFullYear();
+  const month = parsedDate.getMonth(); // 0-based: Jan = 0, Feb = 1, ..., Dec = 11
+
+  const quarters = [
+    { quarter: "Q1", range: "JAN - MAR" },
+    { quarter: "Q2", range: "APR - JUN" },
+    { quarter: "Q3", range: "JUL - SEP" },
+    { quarter: "Q4", range: "OCT - DEC" },
+  ];
+
+  const quarterIndex = Math.floor(month / 3);
+  const { quarter, range } = quarters[quarterIndex];
+
+  return `${quarter} | ${year} | ${range}`;
+}
+
+function getAgeFromDateString(dateString: string): number {
+  if (!dateString) return NaN;
+
+  const birthDate = new Date(dateString);
+  if (isNaN(birthDate.getTime())) return NaN;
+
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+
+  // Adjust age if the birth date hasn't occurred yet this year
+  const isBeforeBirthday =
+    today.getMonth() < birthDate.getMonth() ||
+    (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate());
+
+  if (isBeforeBirthday) {
+    age--;
+  }
+
+  return age;
+}
+
+
+function renderStars(score: number) {
+  return "⭐️ ".repeat(score);
+}
+
+function getBranchFullName(branchCode: string): string {
+  const branchMap: Record<string, string> = {
+    UTTARA_IHSB: "Uttara - IHSB",
+    BASHUNDHARA_SG: "Bashundhara - Sports Grill",
+    "100FT_HGT": "100 Feet - The Hangout",
+  };
+
+  return branchMap[branchCode] || branchCode;
+}
+
+function getAgeCategory(dob: string): string {
+  if (!dob) return "Unknown";
+
+  const birthDate = new Date(dob);
+  if (isNaN(birthDate.getTime())) return "Unknown";
+
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+
+  // Adjust age if the birth date hasn't occurred yet this year
+  const isBeforeBirthday =
+    today.getMonth() < birthDate.getMonth() ||
+    (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate());
+
+  if (isBeforeBirthday) {
+    age--;
+  }
+
+  // Determine category based on age
+  if (age <= 7) return "Early Champs";
+  if (age > 7 && age <= 14) return "Developmental";
+  return "Advanced";
 }
 
 export const NLSMReportEmail = ({
-  date = "",
-  first_name = "",
-  last_name = "",
-  scores = {},
-  comments = ""
+  date = "2024-12-29",
+  first_name = "First",
+  last_name = "Last",
+  scores = {techincal : 5, tactical: 4, physical: 3, mental: 5, attendance: 0},
+  comments = "Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that do not yet have content.",
+  dob = "1995-08-04",
+  branch = "UTTARA_IHSB",
 }: Props) => (
   <Tailwind
     config={{
@@ -48,7 +129,7 @@ export const NLSMReportEmail = ({
       },
     }}
   >
-    <Html>
+    <Html className="my-10 mx-14">
       <Head>
         <Font
           fontFamily="Inter"
@@ -65,50 +146,97 @@ export const NLSMReportEmail = ({
           <Column>
             <Img
               src="https://nlsmbd.com/wp-content/uploads/2024/11/nl-academy-logo.png"
-              width="200"
+              width="300"
               alt="NLSM Logo"
             />
           </Column>
         </Row>
       </Section>
 
-      <Hr />
 
       {/* Title */}
       <Section>
-            <Text className="text-center font-semibold">Player Evaluation: <span className="font-normal">{first_name} {last_name}</span></Text>
-            <Text className="text-center font-semibold">For the month of: <span className="font-normal">{getMonthFromDateString(date)}</span></Text>
+            <Text className="text-4xl font-extrabold text-[#185f34]">PROGRESS REPORT</Text>
+            <Text>{getQuarterInfo(date)}</Text>
       </Section>
 
-      {/* Scores */}
-      <Section className="px-5">
-        <Row>
-          <Column align="center" className="h-[40px] w-1/3">
-            <Text className="font-semibold">Category</Text>
+      {/* Details */}
+      <Section className="pr-20">
+        <Row className="">
+          <Column className="w-1/2 pr-5">
+            <Text className="">Name: <span className="font-semibold">{first_name} {last_name}</span></Text>
+            <div className="w-full border-solid border-b-2 border-gray-200"/>
           </Column>
-          <Column align="center" className="h-[40px] w-1/3">
-            <Text className="font-semibold">Score <span className="font-normal">(out of 5)</span></Text>
+          <Column className="w-1/2">
+           <Text>Age: <span className="font-semibold">{getAgeFromDateString(dob)}</span></Text>
+           <div className="w-full border-solid border-b-2 border-gray-200"/>
           </Column>
         </Row>
-        {Object.entries(scores).map(([key, value], i) => (
-          <Row key={i}>
-            <Column align="center" className="h-[40px] w-1/3">
-              <Text>{key.charAt(0).toUpperCase() + key.slice(1)}</Text>
-            </Column>
-            <Column align="center" className="h-[40px] w-1/3">
-              <Text>{value}</Text>
-            </Column>
-          </Row>
-        ))}
+
+        <Row className="mt-4">
+          <Column className="w-1/2 pr-5">
+            <Text>Category: <span className="font-semibold">{getAgeCategory(dob)}</span></Text>
+            <div className="w-full border-solid border-b-2 border-gray-200"/>
+          </Column>
+          <Column className="w-1/2">
+           <Text>Branch: <span className="font-semibold">{getBranchFullName(branch)}</span></Text>
+           <div className="w-full border-solid border-b-2 border-gray-200"/>
+          </Column>
+        </Row>
       </Section>
 
-      {/* Comments */}
-      <Section className="mt-10 px-32">
-        <Text className="font-semibold">Coaches Comments:</Text>
-        <Text className="">{comments}</Text>
+      {/*  Grading Scale */}
+      <Section className="mt-10">
+        <div className="md:w-1/2">
+          <Text className="font-semibold">GRADING SCALE</Text>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div>5 ⭐️ - Excellent</div>
+            <div>4 ⭐️ - Very Good</div>
+            <div>3 ⭐️ - Improving</div>
+            <div>2 ⭐️ - Satisfactory</div>
+            <div>1 ⭐️ - Needs improvement</div>
+            <div>0 ⭐️ - Did not participate</div>
+          </div>
+        </div>
       </Section>
 
+      {/* Progress */}
+      <Section className="mt-20">
 
+        {/* Table */}
+        <div className="grid grid-cols-4 gap-4">
+
+          {/* HEADER */}
+          <div className="col-span-1 bg-slate-200">
+            <Text className="font-semibold text-center">CATEGORY</Text>
+          </div>
+          <div className="col-span-3 bg-slate-200">
+            <Text className="font-semibold pl-5">SCORE</Text>
+          </div>
+
+          {/* Scores */}
+          {Object.entries(scores).map(([key, value], i) => (
+            <>
+              <div className="col-span-1 bg-[#185f34]" key={`category-${i}`}>
+                <Text className="text-white font-semibold pl-5">{key.charAt(0).toUpperCase() + key.slice(1)}</Text>
+              </div>
+              <div className="col-span-3 bg-slate-100" key={`score-${i}`}>
+                <Text className="font-semibold pl-5">{renderStars(value)}</Text>
+              </div>
+            </>
+          ))}
+
+          {/* Comments */}
+          <div className="col-span-1 bg-slate-200 min-h-[120px]">
+            <Text className="font-semibold pl-5">Coach's comments</Text>
+          </div>
+          <div className="col-span-3 bg-slate-100 min-h-[120px]">
+            <Text className="px-5">{comments}</Text>
+          </div>
+
+
+        </div>
+      </Section>
 
     </Html>
   </Tailwind>

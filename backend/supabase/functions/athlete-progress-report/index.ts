@@ -57,7 +57,9 @@ const handler = async (request: Request): Promise<Response> => {
     first_name: athlete?.first_name,
     last_name: athlete?.last_name,
     scores,
-    comments
+    comments,
+    dob: athlete?.dob,
+    branch: athlete?.branch,
   }))
 
   const body = {
