@@ -109,11 +109,11 @@ function getAgeCategory(dob: string): string {
 }
 
 export const NLSMReportEmail = ({
-  date = "2024-12-29",
-  first_name = "(First Name)",
-  last_name = "(Last Name)",
-  scores = {},
-  comments = "Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that do not yet have content.",
+  date,
+  first_name,
+  last_name,
+  scores,
+  comments,
   dob,
   branch,
 }: Props) => (
@@ -128,7 +128,7 @@ export const NLSMReportEmail = ({
       },
     }}
   >
-    <Html className="my-10 mx-4 md:mx-14">
+    <Html className="my-10 mx-14">
       <Head>
         <Font
           fontFamily="Inter"
@@ -155,13 +155,13 @@ export const NLSMReportEmail = ({
 
       {/* Title */}
       <Section>
-            <Text className="text-3xl md:text-5xl font-extrabold text-[#185f34]">PROGRESS REPORT</Text>
+            <Text className="text-5xl font-extrabold text-[#185f34]">PROGRESS REPORT</Text>
             <Text>{getQuarterInfo(date)}</Text>
       </Section>
 
       {/* Key Details */}
       <Section>
-        <div className="grid grid-cols-1 md:grid-cols-2 md:gap-10 md:pr-48">
+        <div className="grid grid-cols-2 gap-10 pr-48">
           {/* Name */}
           <div>
             <Text className="">Name: <span className="font-semibold">{first_name} {last_name}</span></Text>
@@ -192,9 +192,9 @@ export const NLSMReportEmail = ({
 
       {/*  Grading Scale */}
       <Section className="mt-10">
-        <div className="md:w-1/2">
+        <div className="w-1/2">
           <Text className="font-semibold">GRADING SCALE</Text>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <div>5 ⭐️ - Excellent</div>
             <div>4 ⭐️ - Very Good</div>
             <div>3 ⭐️ - Improving</div>
@@ -209,33 +209,33 @@ export const NLSMReportEmail = ({
       <Section className="mt-20">
 
         {/* Table */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+        <div className="grid grid-cols-4 gap-4">
 
           {/* HEADER */}
-          <div className="md:col-span-1 bg-slate-200">
+          <div className="col-span-1 bg-slate-200">
             <Text className="font-semibold text-center">CATEGORY</Text>
           </div>
-          <div className="md:col-span-3 bg-slate-200">
+          <div className="col-span-3 bg-slate-200">
             <Text className="font-semibold pl-5">SCORE</Text>
           </div>
 
           {/* Scores */}
           {Object.entries(scores).map(([key, value], i) => (
             <>
-              <div className="md:col-span-1 bg-[#185f34]" key={`category-${i}`}>
+              <div className="col-span-1 bg-[#185f34]" key={`category-${i}`}>
                 <Text className="text-white font-semibold pl-5">{key.charAt(0).toUpperCase() + key.slice(1)}</Text>
               </div>
-              <div className="md:col-span-3 bg-slate-100" key={`score-${i}`}>
+              <div className="col-span-3 bg-slate-100" key={`score-${i}`}>
                 <Text className="font-semibold pl-5">{renderStars(value)}</Text>
               </div>
             </>
           ))}
 
           {/* Comments */}
-          <div className="md:col-span-1 bg-slate-200 min-h-[120px]">
-            <Text className="font-semibold px-5 md:pl-5 text-wrap">Coach's comments</Text>
+          <div className="col-span-1 bg-slate-200 min-h-[120px]">
+            <Text className="font-semibold px-5 pl-5 text-wrap">Coach's comments</Text>
           </div>
-          <div className="md:col-span-3 bg-slate-100 min-h-[120px]">
+          <div className="col-span-3 bg-slate-100 min-h-[120px]">
             <Text className="px-5">{comments}</Text>
           </div>
 
