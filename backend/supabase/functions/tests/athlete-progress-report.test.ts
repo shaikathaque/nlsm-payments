@@ -20,14 +20,15 @@ const options = {
 
 const testRecord = {
   date: "2024/11/10",
-  athlete_id: 1,
+  athlete_id: 2,
   scores: {
     passing: 5,
     dribbling: 5,
     discipline: 4,
-    attendance: 3,
+    behaviour: 2,
+    attendance: 0,
   },
-  comments: "Rising Star!",
+  comments: "Great job!",
 }
 
 // Test the creation and functionality of the Supabase client
