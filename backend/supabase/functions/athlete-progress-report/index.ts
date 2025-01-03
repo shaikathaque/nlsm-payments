@@ -11,12 +11,6 @@ export const supabaseClient = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
 );
 
-const isPDF = (buffer: Uint8Array): boolean => {
-  // Check for PDF magic number '%PDF-'
-  const header = new TextDecoder().decode(buffer.slice(0, 5));
-  return header === '%PDF-';
-}
-
 const handler = async (request: Request): Promise<Response> => {
 
   if (!RESEND_API_KEY) {
@@ -83,20 +77,17 @@ const handler = async (request: Request): Promise<Response> => {
 
   console.log("PDF size:", pdfBytes.length, "bytes");
 
-
-
   const body = {
     from: 'NLSM Team <team@pay.nlsmbd.com>',
     to: athlete.email,
     subject: 'NLSM Athelete Progress Report',
     reply_to: "team@nlsmbd.com",
-    html: "Please find attached your progress report.",
+    html,
     attachments: [
       {
         filename: 'progress-report.pdf',
         content: encodeBase64(pdfBytes),
         type: 'application/pdf',
-        // disposition: 'attachment',
       },
     ],
   }
@@ -121,3 +112,19 @@ const handler = async (request: Request): Promise<Response> => {
 }
 
 Deno.serve(handler)
+
+const html = 
+`
+<!DOCTYPE html>
+<html>
+  <body>
+    Dear NLSM Parent/Athlete,
+    <br><br>
+    Please find attached your quarterly player evaluation report.
+    <br><br>
+    Sincerely,
+    <br>
+    NLSM Team
+  </body>
+</html>
+`
