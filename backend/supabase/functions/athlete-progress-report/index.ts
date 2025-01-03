@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
-
+import { encodeBase64 } from "jsr:@std/encoding/base64";
 import { render } from 'npm:@react-email/components';
 import { NLSMReportEmail } from './report.tsx';
 
@@ -57,15 +57,39 @@ const handler = async (request: Request): Promise<Response> => {
     first_name: athlete?.first_name,
     last_name: athlete?.last_name,
     scores,
-    comments
+    comments,
+    dob: athlete?.dob,
+    branch: athlete?.branch,
   }))
+
+  const htmlToPDFUrl = "https://8u6coobmy1.execute-api.ap-south-1.amazonaws.com/default/html-to-pdf";
+  const pdfResponse = await fetch(htmlToPDFUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ html: emailHtml }),
+  });
+
+  // Let's try to decode what we're actually receiving
+  const responseText = await pdfResponse.text();
+  const pdfBytes = new Uint8Array(responseText.split(',').map(num => parseInt(num.trim())));
+
+  console.log("PDF size:", pdfBytes.length, "bytes");
 
   const body = {
     from: 'NLSM Team <team@pay.nlsmbd.com>',
     to: athlete.email,
     subject: 'NLSM Athelete Progress Report',
     reply_to: "team@nlsmbd.com",
-    html: emailHtml,
+    html,
+    attachments: [
+      {
+        filename: 'progress-report.pdf',
+        content: encodeBase64(pdfBytes),
+        type: 'application/pdf',
+      },
+    ],
   }
 
   const res = await fetch('https://api.resend.com/emails', {
@@ -88,3 +112,19 @@ const handler = async (request: Request): Promise<Response> => {
 }
 
 Deno.serve(handler)
+
+const html = 
+`
+<!DOCTYPE html>
+<html>
+  <body>
+    Dear NLSM Parent/Athlete,
+    <br><br>
+    Please find attached your quarterly player evaluation report.
+    <br><br>
+    Sincerely,
+    <br>
+    NLSM Team
+  </body>
+</html>
+`

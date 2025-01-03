@@ -1,4 +1,15 @@
 
+## Local Development
+
+### Serve Supabase Edge functions
+
+`supabase functions serve --env-file ./supabase/.env`
+
+### Run Edge Function Tests
+
+`deno test --allow-all supabase/functions/tests/<test-name>.ts`
+
+
 ## Required Setup
 
 ### Add secrets to vault for creating edge function triggers
