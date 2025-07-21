@@ -29,27 +29,39 @@ git clone <repo-url>
 cd nlsm-payments
 ```
 
-### 2. Frontend Setup
+### 2. Start Supabase Locally
+
+Install the [Supabase CLI](https://supabase.com/docs/guides/cli) if you haven't already:
+
+```bash
+npm install -g supabase
+```
+
+Start the local Supabase stack (from the `backend/` directory):
+
+```bash
+cd backend
+supabase start
+```
+
+This will start the local database, API, and Supabase Studio. Follow the CLI output for local URLs and credentials.
+
+### 3. Frontend Setup
+
+In a new terminal, install dependencies and start the frontend:
 
 ```bash
 cd frontend
 yarn install
-```
-
-- Add bKash API credentials and Supabase keys to `.env` (see below).
-- Start the development server:
-
-```bash
 yarn dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000).
+- Add bKash API credentials and Supabase keys to `.env` (see below).
+- Visit [http://localhost:3000](http://localhost:3000).
 
-### 3. Backend Setup
+### 4. Deploy Edge Functions (Optional for Local Dev)
 
-- Install the [Supabase CLI](https://supabase.com/docs/guides/cli).
-- Configure Supabase project and secrets as described in `backend/README.md`.
-- Deploy edge functions:
+If you want to test edge functions locally or after making changes, deploy them:
 
 ```bash
 cd backend
@@ -84,6 +96,8 @@ See `backend/README.md` for details on setting secrets.
 
 ## Useful Commands
 
+- **Start Supabase Locally**:  
+  `supabase start`
 - **Deploy Edge Functions**:  
   `supabase functions deploy --no-verify-jwt`
 - **Set Supabase Secrets**:  
