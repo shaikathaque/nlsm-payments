@@ -108,3 +108,12 @@ See `backend/README.md` for details on setting secrets.
 ## License
 
 MIT 
+
+
+## Common Errors When setting up a new Database
+
+### Need to enable database webhooks 
+When creating a new project, need to enable webhooks.
+
+Otherwise, will get the error:
+`ERROR: schema "supabase_functions" does not exist (SQLSTATE 3F000)`
