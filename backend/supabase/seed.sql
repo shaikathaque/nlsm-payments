@@ -11,6 +11,20 @@ SELECT vault.create_secret(
     'URL to be used for calling edge functions, this is set here because we want to develop edge functions with webhohks from database triggers in multiple environments'
 );
 
+-- Insert users
+INSERT INTO auth.users 
+  (id, email) 
+VALUES 
+  ('00000000-0000-0000-0000-000000000000', 'shaikathaque4@gmail.com'),
+  ('00000000-0000-0000-0000-000000000001', 'info.nlsmbd@gmail.com');
+
+-- Insert user athletes
+INSERT INTO user_athletes
+  (user_id, athlete_id)
+VALUES
+  ('00000000-0000-0000-0000-000000000000', 1),
+  ('00000000-0000-0000-0000-000000000001', 2);
+
 -- Commenting out because we don't want to end up triggering emails during every seed
 -- Especially during the CI/CD pipeline
 -- insert into athlete_progress

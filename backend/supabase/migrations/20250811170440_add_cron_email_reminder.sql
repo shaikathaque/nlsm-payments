@@ -7,7 +7,7 @@ CREATE EXTENSION IF NOT EXISTS pg_cron;
 -- Define the scheduled job
 SELECT cron.schedule(
   'payment-reminder-schedule',
-  '* * * * *',
+  '*/5 * * * *',
   $$
   SELECT public.call_edge_function_from_trigger('payment-reminder-email');
   $$
