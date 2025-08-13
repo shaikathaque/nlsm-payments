@@ -1,9 +1,9 @@
 insert into athletes
   (id, first_name, last_name, dob, branch, email, phone)
 values
-  (1, 'Christiano', 'Ronaldo', '1995-04-08', 'BASHUNDHARA_SG', 'nlsmbd.dev@gmail.com', '1234567890'),
-  (2, 'Lionel', 'Messi', '1995-03-10', 'UTTARA_IHSB', 'nlsmbd.dev@gmail.com', '0987654321'),
-  (3, 'Neymar', 'Santos', '2000-01-01', 'BASHUNDHARA_SG', 'nlsmbd.dev@gmail.com', '1029384756');
+  (1, 'Shaikat', 'Haque', '1995-04-08', 'BASHUNDHARA_SG', 'shaikathaque4@gmail.com@gmail.com', '1234567890'),
+  (2, 'Rahbar', 'Khan', '1995-03-10', 'UTTARA_IHSB', 'nlsmbd.dev@gmail.com', '0987654321'),
+  (3, 'Shayer', 'Khan', '2000-01-01', 'BASHUNDHARA_SG', 'info.nlsmbd@gmail.com', '1029384756');
 
 SELECT vault.create_secret(
     'http://host.docker.internal:54321', 
@@ -15,15 +15,17 @@ SELECT vault.create_secret(
 INSERT INTO auth.users 
   (id, email) 
 VALUES 
-  ('00000000-0000-0000-0000-000000000000', 'shaikathaque4@gmail.com'),
-  ('00000000-0000-0000-0000-000000000001', 'info.nlsmbd@gmail.com');
+  ('00000000-0000-0000-0000-000000000000', 'shaikat@hawkapps.io'),
+  ('00000000-0000-0000-0000-000000000001', 'nlsmbd.dev@gmail.com'),
+  ('00000000-0000-0000-0000-000000000002', 'info.nlsmbd@gmail.com');
 
 -- Insert user athletes
 INSERT INTO user_athletes
   (user_id, athlete_id)
 VALUES
   ('00000000-0000-0000-0000-000000000000', 1),
-  ('00000000-0000-0000-0000-000000000001', 2);
+  ('00000000-0000-0000-0000-000000000001', 2),
+  ('00000000-0000-0000-0000-000000000002', 3);
 
 -- Commenting out because we don't want to end up triggering emails during every seed
 -- Especially during the CI/CD pipeline
